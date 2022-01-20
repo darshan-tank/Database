@@ -1,0 +1,111 @@
+create database db_helperland
+
+use db_helperland
+
+create table TBL_Customer_Details
+(
+CLM_Cust_ID int NOT NULL Primary Key,
+CLM_Address_ID int NOT NULL,
+CLM_First_Name nvarchar(50) NOT NULL,
+CLM_Last_Name nvarchar(50) NOT NULL,
+CLM_Email nvarchar(50) NOT NULL,
+CLM_Number bigint NOT NULL,
+CLM_DOB date,
+CLM_Language nvarchar(2),
+CLM_Password nvarchar(50) NOT NULL
+)
+Alter table TBL_Customer_Details add constraint TBL_Customer_Details_CLM_Address_ID_FK Foreign Key (CLM_Address_ID) REFERENCES TBL_Address(CLM_Address_ID)
+
+create table TBL_Provider_Details
+(
+CLM_Pro_ID int NOT NULL Primary Key,
+CLM_Address_ID int NOT NULL,
+CLM_First_Name nvarchar(50) NOT NULL,
+CLM_Last_Name nvarchar(50) NOT NULL,
+CLM_Email nvarchar(50) NOT NULL,
+CLM_Number bigint NOT NULL,
+CLM_DOB date,
+CLM_Language nvarchar(2),
+CLM_Password nvarchar(50) NOT NULL,
+CLM_Avatar nvarchar,
+CLM_Nationality nvarchar(20),
+CLM_Account_Status nvarchar(20)
+)
+Alter table TBL_Provider_Details add constraint TBL_Provider_Details_CLM_Address_ID_FK Foreign Key (CLM_Address_ID) REFERENCES TBL_Address(CLM_Address_ID)
+
+create table TBL_Address
+(
+CLM_Address_ID int NOT NULL Primary Key,
+CLM_User_ID int NOT NULL,
+CLM_Street_Name nvarchar(50),
+CLM_House_Number nvarchar(10),
+CLM_Postal_Code int NOT NULL,
+CLM_City nvarchar(50),
+CLM_Address_Type nvarchar(10)
+)
+Alter table TBL_Address add constraint TBL_Address_CLM_User_ID_For_Pro_FK Foreign Key (CLM_User_ID) REFERENCES TBL_Provider_Details(CLM_Pro_ID)
+Alter table TBL_Address add constraint TBL_Address_CLM_User_ID_For_Cust_FK Foreign Key (CLM_User_ID) REFERENCES TBL_Customer_Details(CLM_Cust_ID)
+
+create table TBL_Service_Details
+(
+CLM_Service_ID int NOT NULL Primary Key,
+CLM_Actual_Pro_ID int,
+CLM_Cust_ID int NOT NULL,
+CLM_Fav_Pro_ID int,
+CLM_Address_ID int NOT NULL,
+CLM_No_Of_Extra_service int,
+CLM_Postal_Code int NOT NULL,
+CLM_Schd_Date date NOT NULL,
+CLM_Schd_Time time NOT NULL,
+CLM_Comment nvarchar(50),
+CLM_Have_Pet_Flag int,
+CLM_Cost int NOT NULL,
+CLM_Service_Status nvarchar(20),
+CLM_Payment_Status nvarchar(20),
+CLM_Reason_For_Cancel nvarchar(120)
+)
+Alter table TBL_Service_Details add constraint TBL_Service_Details_CLM_Actual_Pro_ID_FK Foreign Key (CLM_Actual_Pro_ID) REFERENCES TBL_Provider_Details(CLM_Pro_ID)
+Alter table TBL_Service_Details add constraint TBL_Service_Details_CLM_Fav_Pro_ID_FK Foreign Key (CLM_Fav_Pro_ID) REFERENCES TBL_Provider_Details(CLM_Pro_ID)
+Alter table TBL_Service_Details add constraint TBL_Service_Details_CLM_Cust_ID_FK Foreign Key (CLM_Cust_ID) REFERENCES TBL_Customer_Details(CLM_Cust_ID)
+Alter table TBL_Service_Details add constraint TBL_Service_Details_CLM_Address_ID_FK Foreign Key (CLM_Address_ID) REFERENCES TBL_Address(CLM_Address_ID)
+
+create table TBL_Rating
+(
+CLM_Rating_ID int NOT NULL Primary Key,
+CLM_Service_ID int NOT NULL,
+CLM_Feedback_Msg nvarchar(50),
+CLM_Total_Rating int
+)
+Alter table TBL_Rating add constraint TBL_Rating_CLM_Service_ID_FK Foreign Key (CLM_Service_ID) REFERENCES TBL_Service_Details(CLM_Service_ID)
+
+create table TBL_Feedback
+(
+CLM_Rating_ID int NOT NULL Primary Key,
+CLM_First_Name nvarchar(50) NOT NULL,
+CLM_Last_Name nvarchar(50) NOT NULL,
+CLM_Email nvarchar(50) NOT NULL,
+CLM_Number bigint NOT NULL,
+CLM_Subject nvarchar(10),
+CLM_Feedback_Msg nvarchar(50),
+CLM_Feedback_Attachment nvarchar(50)
+)
+
+create table TBL_Favorite_Provider
+(
+CLM_Fav_Pro_ID int NOT NULL Primary Key,
+CLM_Service_Pro_ID int NOT NULL,
+CLM_Customer_ID int NOT NULL,
+CLM_Fav_Flag nvarchar(10)
+)
+Alter table TBL_Favorite_Provider add constraint TBL_Favorite_Provider_CLM_Service_Pro_ID_FK Foreign Key (CLM_Service_Pro_ID) REFERENCES TBL_Provider_Details(CLM_Pro_ID)
+Alter table TBL_Favorite_Provider add constraint TBL_Favorite_Provider_CLM_Customer_ID_FK Foreign Key (CLM_Customer_ID) REFERENCES TBL_Customer_Details(CLM_Cust_ID)
+
+create table TBL_Block_Customer
+(
+CLM_Block_Cust_ID int NOT NULL Primary Key,
+CLM_Service_Pro_ID int NOT NULL,
+CLM_Customer_ID int NOT NULL,
+CLM_Block_Flag nvarchar(10)
+)
+Alter table TBL_Block_Customer add constraint TBL_Block_Customer_CLM_Service_Pro_ID_FK Foreign Key (CLM_Service_Pro_ID) REFERENCES TBL_Provider_Details(CLM_Pro_ID)
+Alter table TBL_Block_Customer add constraint TBL_Block_Customer_CLM_Customer_ID_FK Foreign Key (CLM_Customer_ID) REFERENCES TBL_Customer_Details(CLM_Cust_ID)
